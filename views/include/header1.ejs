@@ -1,0 +1,102 @@
+<aside id="sidebar" class="sidebar">
+  <ul class="sidebar-nav" id="sidebar-nav">
+    <% sidebarLinks.forEach(link=> { %>
+      <% if (link.name==='Logout' ) { %>
+        <!-- Display the logout link with a specific ID -->
+        <li class="nav-item">
+          <a id="logoutButton" class="nav-link <%= currentRoute === link.route ? 'active active-class' : 'collapsed' %>"
+            href="<%= link.route %>" onclick="toggleActivelogout()">
+            <i class="<%= link.icon %>"></i>
+            <span>
+              <%= link.name %>
+            </span>
+          </a>
+        </li>
+        <% } else if (Array.isArray(link.submenu)) { %>
+          <!-- Display a link with a submenu -->
+          <li class="nav-item">
+            <a class="nav-link <%= currentRoute === link.route ? 'active active-class' : 'collapsed' %>"
+              data-bs-toggle="collapse" href="#<%= link.name %>-submenu" onclick="toggleActive('<%= link.route %>')">
+              <i class="<%= link.icon %>"></i>
+              <span>
+                <%= link.name %>
+              </span>
+              <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="<%= link.name %>-submenu"
+              class="nav-content collapse <%= currentRoute === link.route || link.submenu.some(sublink => currentRoute === sublink.route) ? 'show' : '' %>">
+              <% link.submenu.forEach(sublink=> { %>
+                <li>
+                  <a href="<%= sublink.route %>"
+                    class="<%= currentRoute === sublink.route ? 'active active-class' : 'collapsed' %>">
+                    <i class="<%= sublink.icon %>"></i>
+                    <%= sublink.name %>
+                  </a>
+                </li>
+                <% }); %>
+            </ul>
+          </li>
+          <% } else { %>
+            <!-- Display a link without a submenu -->
+            <li class="nav-item">
+              <a class="nav-link <%= currentRoute === link.route ? 'active active-class' : 'collapsed' %>"
+                href="<%= link.route %>" onclick="toggleActive('<%= link.route %>')">
+                <i class="<%= link.icon %>"></i>
+                <span>
+                  <%= link.name %>
+                </span>
+              </a>
+            </li>
+            <% } %>
+              <% }); %>
+  </ul>
+</aside>
+
+<!-- logout function destroying session  -->
+
+<script>
+  async function toggleActivelogout() {
+
+    try {
+      const response = await fetch('http://localhost:3000/logout', {
+        method: 'post',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // alert(data)
+        // console.log(data);
+        window.location.href = "http://localhost:3000/pages-login";
+      } else {
+        console.error('Failed to check session');
+      }
+    } catch (error) {
+      console.error('Error during session check:', error);
+    }
+
+
+
+    // alert('hii')
+    // try {
+    //   alert('ander to aaya')
+
+    //   const response = await fetch('http://localhost:3000/auth/logout', {
+    //     method: 'POST',
+    //     credentials: 'include', // Include credentials (cookies) in the request
+    //   });
+
+    //   if (response.ok) {
+    //     // Redirect or handle successful logout
+    //     // window.location.href = "http://localhost:3000/";
+    //     alert('hoo gya ')
+    //   } else {
+    //     alert("nhi aa rha ")
+    //     const errorMessage = await response.json();
+    //     console.error('Logout failed:', errorMessage);
+    //   }
+    // } catch (error) {
+    //   console.error('Error during logout:', error);
+    // }
+  }
+</script>
